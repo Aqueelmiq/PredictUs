@@ -52,9 +52,9 @@ def predict():
 
         winner = label_lines[top_k[0]]
 
-        diff12 = abs(predictions[0][0] - predictions[0][1])
-        diff23 = abs(predictions[0][1] - predictions[0][2])
-        diff34 = abs(predictions[0][2] - predictions[0][3])
+        diff12 = abs(predictions[0][top_k[0]] - predictions[0][top_k[1]])
+        diff23 = abs(predictions[0][top_k[1]] - predictions[0][top_k[2]])
+        diff34 = abs(predictions[0][top_k[2]] - predictions[0][top_k[3]])
 
         if(diff12 < 0.2):
             winner = 'confused'
