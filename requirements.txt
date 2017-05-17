@@ -1,3 +1,4 @@
 Flask
 tensorflow
 gunicorn
+flask_cors
