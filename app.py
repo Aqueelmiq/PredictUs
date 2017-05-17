@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from datetime import datetime
 app = Flask(__name__)
 
@@ -51,12 +51,23 @@ def predict():
         # Sort to show labels of first prediction in order of confidence
         top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
+        winner = label_lines[top_k[0]]
+
+        diff12 = predictions[0][0] - predictions[0][1]
+        diff23 = predictions[0][1] - predictions[0][2]
+        diff34 = predictions[0][2] - predictions[0][3]
+
+        if(diff12 < 0.20):
+            winner = 'confused'
+
         for node_id in top_k:
             human_string = label_lines[node_id]
             score = predictions[0][node_id]
             print('%s (score = %.5f)' % (human_string, score))
 
-    return "HI"
+    os.remove(image_path)
+
+    return jsonify({'winner': winner})
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=True)
