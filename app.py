@@ -2,14 +2,13 @@ import os
 
 from flask import Flask, request, jsonify
 from datetime import datetime
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+import urllib.request
+import tensorflow as tf
+
 
 app = Flask(__name__)
 CORS(app)
-
-import urllib.request
-
-import tensorflow as tf
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -17,15 +16,12 @@ APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 def homepage():
     the_time = datetime.now().strftime("%A, %d %b %Y %l:%M %p")
 
-    return """
-    <h1>Hello heroku</h1>
-    <p>It is currently {time}.</p>
-
-    <img src="http://loremflickr.com/600/400" />
-    """.format(time=the_time)
+    return "Hello"
 
 @app.route('/predict', methods=['POST'])
 def predict():
+
+    print(request.json)
     url = request.json['img']
     image_path = os.path.join(APP_ROOT, 'tests.jpg')
     urllib.request.urlretrieve(url, image_path)
@@ -56,11 +52,11 @@ def predict():
 
         winner = label_lines[top_k[0]]
 
-        diff12 = predictions[0][0] - predictions[0][1]
-        diff23 = predictions[0][1] - predictions[0][2]
-        diff34 = predictions[0][2] - predictions[0][3]
+        diff12 = abs(predictions[0][0] - predictions[0][1])
+        diff23 = abs(predictions[0][1] - predictions[0][2])
+        diff34 = abs(predictions[0][2] - predictions[0][3])
 
-        if(diff12 < 0.20):
+        if(diff12 < 0.2):
             winner = 'confused'
 
         for node_id in top_k:
